@@ -28,6 +28,10 @@ class I15R
     def override_i18n_method
       @options.fetch(:override_i18n_method, nil)
     end
+
+    def use_gettext?
+      @options.fetch(:use_gettext, false)
+    end
   end
 
   attr_reader :config
@@ -85,7 +89,8 @@ class I15R
                                   file_type,
                                   @locale_creator,
                                   :add_default => config.add_default,
-                                  :override_i18n_method => config.override_i18n_method)
+                                  :override_i18n_method => config.override_i18n_method,
+                                  :use_gettext => config.use_gettext?)
     transformed_text = pm.run(text) do |old_line, new_line|
       @printer.print_diff(old_line, new_line)
     end

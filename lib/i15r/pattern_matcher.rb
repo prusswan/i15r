@@ -34,6 +34,11 @@ class I15R
       @prefix = prefix
       @file_type = file_type
       transformer_class = self.class.const_get("#{file_type.to_s.capitalize}Transformer")
+      @use_gettext = options[:use_gettext]
+      if @use_gettext
+        options[:override_i18n_method] = "s_"
+        options[:add_default] = false
+      end
       @transformer = transformer_class.new(options[:add_default], options[:override_i18n_method] || 'I18n.t', locale_creator)
     end
 
@@ -41,7 +46,11 @@ class I15R
       #TODO: downcase does not work properly for accented chars, like 'Ú', see function in ActiveSupport that deals with this
       #TODO: [:punct:] would be nice but it includes _ which we don't want to remove
       key = text.strip.downcase.gsub(/[\s\/]+/, '_').gsub(/[!?.,:"';()#\/\\]/, '')
-      "#{@prefix}.#{key}"
+      if @use_gettext
+        "#{@prefix}|#{text}"
+      else
+        "#{@prefix}.#{key}"
+      end
     end
 
     def run(text)
@@ -73,6 +82,7 @@ class I15R
       def initialize(add_default, i18n_method, locale_creator)
         @add_default = add_default
         @i18n_method = i18n_method
+        @use_gettext = @i18n_method == "s_" ? true : false
         @locale_creator = locale_creator
       end
 

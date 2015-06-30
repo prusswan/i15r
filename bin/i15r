@@ -33,6 +33,11 @@ def parse_options(args)
     opts.on("--create-locale-file FILE_NAME", "Create a locale file with the given name.") do |m|
       options[:create_locale_file] = m
     end
+    opts.on("--gettext") do
+      options[:use_gettext] = true
+      options[:override_i18n_method] = 's_'
+      options[:add_default] = false
+    end
 
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts
